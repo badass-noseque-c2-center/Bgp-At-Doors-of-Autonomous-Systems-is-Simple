@@ -1,16 +1,13 @@
-FROM docker:dind
+FROM debian:latest
 
-ARG USER=mrodrigu
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openssh-server \
+    iproute2 \
+    iputils-ping \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN apk add openssh-server
+RUN useradd -rm -d /home/gns3 -s /bin/bash -g root -G sudo -u 1000 gns3
 
-RUN adduser -S -s /bin/sh $USER
+RUN  echo 'gns3:gns3' | chpasswd
 
-RUN ssh-keygen -A
-
-RUN echo -e "PasswordAuthentication no" >> /etc/ssh/sshd_config && \
-    echo -e "\n" | passwd $USER
-
-COPY ./authorized_keys /home/$USER/.ssh/authorized_keys
-
-ENTRYPOINT ["/usr/sbin/sshd", "-D"]
+#ENTRYPOINT ["/usr/sbin/sshd", "-D"]
