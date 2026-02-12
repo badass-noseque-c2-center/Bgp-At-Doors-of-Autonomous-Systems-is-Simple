@@ -1,7 +1,8 @@
 
 # Table of Contents
 
-1.  [Setup ssh connection between GNS3 nodes and Host machine](#orgda52dcf)
+1.  [Auto Setup](#org3e5ab26)
+2.  [Manual setup ssh connection between GNS3 nodes and Host machine](#org8a07614)
     1.  [Create a TAP interface](#orgc97c830)
     2.  [Connect to tap interface](#org2b4e8fd)
     3.  [Setup the GNS3 machine](#org6214c32)
@@ -9,9 +10,20 @@
 
 
 
-<a id="orgda52dcf"></a>
+<a id="org3e5ab26"></a>
 
-# Setup ssh connection between GNS3 nodes and Host machine
+# Auto Setup
+
+To automatically setup your virtual machine for working with gns3 run the following script:
+
+    ./bootstrap.sh <BASE-ADDRESS> <MASK>
+
+Default address and mask is: `10.0.10.` and `255.255.255.0`.
+
+
+<a id="org8a07614"></a>
+
+# Manual setup ssh connection between GNS3 nodes and Host machine
 
 
 <a id="orgc97c830"></a>
@@ -39,6 +51,27 @@
 ## Setup the GNS3 machine
 
 -   Configure the machine interface so it has an address in the range of the newly created tap interface (e.g. If tap interface is `10.0.1.1/24`, the machine could be `10.0.1.2/24`).
+    Example of file `/etc/network/intrfaces`
+    
+        #
+        # This is a sample network config, please uncomment lines to configure the network
+        #
+        
+        # Uncomment this line to load custom interface files
+        # source /etc/network/interfaces.d/*
+        
+        # Static config for eth0
+        #auto eth0
+        #iface eth0 inet static
+        #	address 192.168.0.2
+        #	netmask 255.255.255.0
+        #	gateway 192.168.0.1
+        #	up echo nameserver 192.168.0.1 > /etc/resolv.conf
+        
+        # DHCP config for eth0
+        #auto eth0
+        #iface eth0 inet dhcp
+        #	hostname gns3debian-1
 -   Restart networking:
     
         sudo systemctl restart networking
@@ -58,13 +91,4 @@
     From Host
     
         ssh <user>@localhost -p2222
-
-Script:
-
-    #!/bin/bash
-    
-    address=${1:-10.0.10.2}
-    port=${2:-2222}
-    
-    socat TCP-LISTEN:$port,fork TCP:$address:22
 

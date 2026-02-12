@@ -10,4 +10,7 @@ RUN useradd -rm -d /home/gns3 -s /bin/bash -g root -G sudo -u 1000 gns3
 
 RUN  echo 'gns3:gns3' | chpasswd
 
-#ENTRYPOINT ["/usr/sbin/sshd", "-D"]
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
