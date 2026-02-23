@@ -90,5 +90,5 @@ Default address and mask is: `10.0.10.` and `255.255.255.0`.
     
     From Host
     
-        ssh <user>@localhost -p2222
+        ssh <user>@localhost -p 2222
 
