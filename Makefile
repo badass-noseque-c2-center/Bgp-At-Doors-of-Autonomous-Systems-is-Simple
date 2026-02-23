@@ -6,5 +6,12 @@ MASK ?= 255.255.255.0
 
 export MASK UTILS
 
-all:
+build: build_pc build_router
+
+build_pc:
 	$(MAKE) -C ./images/pc build ROOT=../.. ADDRESS=$(BASE_ADDRESS).1
+
+build_router:
+	$(MAKE) -C ./images/router build ROOT=../.. ADDRESS=$(BASE_ADDRESS).2
+
+.PHONY: build build_pc build_router
