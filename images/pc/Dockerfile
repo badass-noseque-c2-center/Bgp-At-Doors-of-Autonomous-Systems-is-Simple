@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN useradd -rm -d /home/gns3 -s /bin/bash -g root -G sudo -u 1000 gns3
 
-RUN  echo 'gns3:gns3' | chpasswd
+RUN echo 'gns3:gns3' | chpasswd \
+    && echo 'root:gns3' | chpasswd
 
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
