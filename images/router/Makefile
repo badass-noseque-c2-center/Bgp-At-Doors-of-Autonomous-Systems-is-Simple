@@ -7,19 +7,7 @@ NAME = gns3_router
 
 $(shell $(call render_machine_template,$(TEMPLATE)))
 
-build:
-	docker build -t $(NAME) .
-
-debug: build clean
-	docker create --rm -it \
-	--name $(NAME)  \
-	-p $(PORT):22 \
-	--entrypoint "/debug.sh" \
-	$(NAME):latest
-	docker cp ./debug.sh $(NAME):/debug.sh
-	docker start $(NAME)
-
-clean:
-	docker container rm -f $(NAME)
+# Docker build/debug targets are generic, just include them
+include $(ROOT)/$(UTILS_DIR)/docker-generic.mk
 
 .PHONY: build debug clean

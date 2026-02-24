@@ -1,5 +1,6 @@
 ROOT = .
 UTILS_DIR = utils
+PID_FILE = .pids
 
 # Real addresses MUST be defined only in this file
 BASE_ADDRESS ?= 10.0.10
@@ -24,7 +25,8 @@ setup-host:
 	$(ROOT)/$(UTILS_DIR)/setup-host.sh $(BASE_ADDRESS).1 $(MASK)
 
 container-debug: build-debug setup-host
-	socat TCP-LISTEN:2230,fork TCP:localhost:2250 & echo "Router pid: $$!"
-	socat TCP-LISTEN:2231,fork TCP:localhost:2251 & echo "Router pid: $$!"
+	[ -f $(PID_FILE) ] && kill -9 $$(cat $(PID_FILE))
+	socat TCP-LISTEN:2230,fork TCP:localhost:2250 & echo -n "$$! " > $(PID_FILE)
+	socat TCP-LISTEN:2231,fork TCP:localhost:2251 & echo -n "$$! " >> $(PID_FILE)
 
 .PHONY: build build-pc build-router cosa
