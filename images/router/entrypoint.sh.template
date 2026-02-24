@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+cat <<EOF > /etc/network/interfaces
+auto eth0
+iface eth0 inet static
+	address <ADDRESS>
+	netmask <MASK>
+EOF
+
+/usr/sbin/sshd -D &
+
+exec /bin/bash
