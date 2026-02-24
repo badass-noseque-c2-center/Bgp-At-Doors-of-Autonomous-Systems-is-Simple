@@ -8,7 +8,6 @@ debug: build clean
 	-p $(PORT):22 \
 	--entrypoint "/debug.sh" \
 	$(NAME):latest
-	docker cp ./debug.sh $(NAME):/debug.sh
 	docker start $(NAME)
 
 clean:

@@ -29,4 +29,4 @@ container-debug: build-debug setup-host
 	socat TCP-LISTEN:2230,fork TCP:localhost:2250 & echo -n "$$! " > $(PID_FILE)
 	socat TCP-LISTEN:2231,fork TCP:localhost:2251 & echo -n "$$! " >> $(PID_FILE)
 
-.PHONY: build build-pc build-router cosa
+.PHONY: build build-pc build-router

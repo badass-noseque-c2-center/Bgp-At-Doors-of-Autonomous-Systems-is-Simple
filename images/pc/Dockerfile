@@ -12,6 +12,8 @@ RUN echo 'gns3:gns3' | chpasswd \
     && echo 'root:gns3' | chpasswd
 
 COPY entrypoint.sh /
+COPY debug.sh /
 RUN chmod +x /entrypoint.sh
+RUN chmod +x /debug.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
