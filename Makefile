@@ -29,6 +29,7 @@ VM_FLAGS =	-enable-kvm \
 	        -cpu host \
 	        -machine q35 \
 	        -device virtio-vga \
+			-nic user,hostfwd=tcp::2250-:2250,hostfwd=tcp::2251-:2251 \
 	        -display gtk
 
 export MASK UTILS_DIR
