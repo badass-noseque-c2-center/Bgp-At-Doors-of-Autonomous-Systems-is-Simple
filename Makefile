@@ -20,29 +20,28 @@ VM_IMAGE_LINK ?= https://releases.ubuntu.com/24.04.4/ubuntu-24.04.4-desktop-amd6
 VM_IMAGE ?= $(ROOT)/$(notdir $(VM_IMAGE_LINK))
 VM_DRIVE ?= $(ROOT)/ubuntu.qcow2
 VM_MOUNT ?= $(ROOT)
-VM_CREATE_FLAGS = -drive file=$(VM_DRIVE),if=virtio,format=qcow2
+VM_CREATE_FLAGS =  -cdrom  $(VM_IMAGE)
 VM_FLAGS =	-enable-kvm \
 	        -m 4096 \
 		-smp 4 \
-	        -cdrom  $(VM_IMAGE)\
+	        -drive file=$(VM_DRIVE),if=virtio,format=qcow2 \
 		-virtfs local,path=$(VM_MOUNT),mount_tag=p1,security_model=mapped-xattr \
 	        -cpu host \
 	        -machine q35 \
 	        -device virtio-vga \
 	        -display gtk
 
-
-
 export MASK UTILS_DIR
 
 build: build-pc build-router
 build-debug: debug-pc debug-router
 
-%-pc:
+# Four options for this targets: build-pc build-router debug-pc debug-router
+%-pc: FORCE
 	$(MAKE) -C ./images/pc $* ROOT=../.. ADDRESS=$(PC_ADDRESS) \
 	$(if $(findstring debug,$*),PORT=2250)
 
-%-router:
+%-router: FORCE
 	$(MAKE) -C ./images/router $* ROOT=../.. ADDRESS=$(ROUTER_ADDRESS) \
 	$(if $(findstring debug,$*),PORT=2251)
 
@@ -55,7 +54,7 @@ container-debug: build-debug setup-host
 	socat TCP-LISTEN:2231,fork TCP:localhost:2251 & echo -n "$$! " >> $(PID_FILE)
 
 # Two options for this target: vm-start vm-create
-vm-%: | $(VM_DRIVE) $(VM_IMAGE)
+vm-%: FORCE | $(VM_DRIVE) $(VM_IMAGE)
 	$(VM) $(VM_FLAGS) $(if $(findstring create,$*),$(VM_CREATE_FLAGS))
 
 $(VM_DRIVE):
@@ -64,4 +63,6 @@ $(VM_DRIVE):
 $(VM_IMAGE):
 	wget $(VM_IMAGE_LINK)
 
-.PHONY: build build-pc build-router
+FORCE:
+
+.PHONY: build build-debug setup-host container-debug
