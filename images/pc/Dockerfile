@@ -2,6 +2,7 @@ FROM debian:latest
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-server \
+    sudo \
     iproute2 \
     iputils-ping \
     && rm -rf /var/lib/apt/lists/*

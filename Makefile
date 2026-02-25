@@ -49,7 +49,7 @@ setup-host:
 	$(ROOT)/$(UTILS_DIR)/setup-host.sh $(BASE_ADDRESS).1 $(MASK)
 
 container-debug: build-debug setup-host
-	[ -f $(PID_FILE) ] && kill -9 $$(cat $(PID_FILE))
+	[ -f $(PID_FILE) ] && kill -9 $$(cat $(PID_FILE)) || true
 	socat TCP-LISTEN:2230,fork TCP:localhost:2250 & echo -n "$$! " > $(PID_FILE)
 	socat TCP-LISTEN:2231,fork TCP:localhost:2251 & echo -n "$$! " >> $(PID_FILE)
 
