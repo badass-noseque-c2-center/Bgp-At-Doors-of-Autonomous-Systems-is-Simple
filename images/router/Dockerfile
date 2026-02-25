@@ -12,9 +12,13 @@ RUN useradd -rm -d /home/gns3 -s /bin/bash -g root -G sudo -u 1000 gns3
 
 RUN echo 'gns3:gns3' | chpasswd
 
+COPY config/daemons  /etc/frr/daemons
+COPY config/frr.conf /etc/frr/frr.conf
+
 COPY entrypoint.sh /
 COPY debug.sh /
-RUN chmod +x /entrypoint.sh
+
 RUN chmod +x /debug.sh
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

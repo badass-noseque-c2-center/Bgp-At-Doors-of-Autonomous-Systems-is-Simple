@@ -11,4 +11,4 @@ EOF
 
 /usr/sbin/sshd -D &
 
-exec /bin/bash
+/usr/lib/frr/frrinit.sh start
