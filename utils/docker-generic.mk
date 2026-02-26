@@ -5,7 +5,9 @@ build:
 # for simplicity --privileged is used.
 debug: build clean
 	docker run --rm -d \
-	--privileged \
+	--cap-add=NET_ADMIN \
+	--cap-add=NET_RAW \
+	--sysctl net.ipv4.ip_forward=1 \
 	--name $(NAME)  \
 	--hostname $(NAME)  \
 	-p $(PORT):22 \
