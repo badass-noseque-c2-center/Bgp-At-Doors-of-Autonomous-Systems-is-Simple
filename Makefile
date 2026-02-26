@@ -1,6 +1,7 @@
 ROOT = .
 UTILS_DIR = utils
-PID_FILE = .pids
+
+include $(ROOT)/$(UTILS_DIR)/utils.mk
 
 ## ###################################################################
 ## DOCKER VARS
@@ -29,7 +30,7 @@ VM_FLAGS =	-enable-kvm \
 	        -cpu host \
 	        -machine q35 \
 	        -device virtio-vga \
-			-nic user,hostfwd=tcp::2250-:2250,hostfwd=tcp::2251-:2251 \
+		-nic user,hostfwd=tcp::2250-:2250,hostfwd=tcp::2251-:2251 \
 	        -display gtk
 
 export MASK UTILS_DIR
@@ -38,21 +39,18 @@ build: build-pc build-router
 build-debug: debug-pc debug-router
 
 # Four options for this targets: build-pc build-router debug-pc debug-router
-%-pc: FORCE
+%-pc: FORCE setup-host
 	$(MAKE) -C ./images/pc $* ROOT=../.. ADDRESS=$(PC_ADDRESS) \
 	$(if $(findstring debug,$*),PORT=2250)
+	$(if $(findstring debug,$*),$(call bridge_connection,2230,2250))
 
-%-router: FORCE
+%-router: FORCE setup-host
 	$(MAKE) -C ./images/router $* ROOT=../.. ADDRESS=$(ROUTER_ADDRESS) \
 	$(if $(findstring debug,$*),PORT=2251)
+	$(if $(findstring debug,$*),$(call bridge_connection,2231,2251))
 
 setup-host:
 	$(ROOT)/$(UTILS_DIR)/setup-host.sh $(BASE_ADDRESS).1 $(MASK)
-
-container-debug: build-debug setup-host
-	[ -f $(PID_FILE) ] && kill -9 $$(cat $(PID_FILE)) || true
-	socat TCP-LISTEN:2230,fork TCP:localhost:2250 & echo -n "$$! " > $(PID_FILE)
-	socat TCP-LISTEN:2231,fork TCP:localhost:2251 & echo -n "$$! " >> $(PID_FILE)
 
 # Two options for this target: vm-start vm-create
 vm-%: FORCE | $(VM_DRIVE) $(VM_IMAGE)
