@@ -39,12 +39,12 @@ build: build-pc build-router
 build-debug: debug-pc debug-router
 
 # Four options for this targets: build-pc build-router debug-pc debug-router
-%-pc: FORCE setup-host
+build-pc debug-pc: %-pc: setup-host
 	$(MAKE) -C ./images/pc $* ROOT=../.. ADDRESS=$(PC_ADDRESS) \
 	$(if $(findstring debug,$*),PORT=2250)
 	$(if $(findstring debug,$*),$(call bridge_connection,2230,2250))
 
-%-router: FORCE setup-host
+build-router debug-router: %-router: setup-host
 	$(MAKE) -C ./images/router $* ROOT=../.. ADDRESS=$(ROUTER_ADDRESS) \
 	$(if $(findstring debug,$*),PORT=2251)
 	$(if $(findstring debug,$*),$(call bridge_connection,2231,2251))
@@ -53,7 +53,7 @@ setup-host:
 	$(ROOT)/$(UTILS_DIR)/setup-host.sh $(BASE_ADDRESS).1 $(MASK)
 
 # Two options for this target: vm-start vm-create
-vm-%: FORCE | $(VM_DRIVE) $(VM_IMAGE)
+vm-start vm-create: vm-%: | $(VM_DRIVE) $(VM_IMAGE)
 	$(VM) $(VM_FLAGS) $(if $(findstring create,$*),$(VM_CREATE_FLAGS))
 
 $(VM_DRIVE):
@@ -62,6 +62,4 @@ $(VM_DRIVE):
 $(VM_IMAGE):
 	wget $(VM_IMAGE_LINK)
 
-FORCE:
-
-.PHONY: build build-debug setup-host container-debug
+.PHONY: build build-debug setup-host
