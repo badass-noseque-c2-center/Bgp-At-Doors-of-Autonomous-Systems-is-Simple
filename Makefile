@@ -39,12 +39,12 @@ build: build-pc build-router
 debug: debug-pc debug-router
 
 # Four options for this targets: build-pc build-router debug-pc debug-router
-build-pc debug-pc: %-pc: setup-host
+build-pc debug-pc: %-pc:
 	$(MAKE) -C ./images/pc $* ROOT=../.. ADDRESS=$(PC_ADDRESS) \
 	$(if $(findstring debug,$*),PORT=2250)
 	$(if $(findstring debug,$*),$(call bridge_connection,2230,2250))
 
-build-router debug-router: %-router: setup-host
+build-router debug-router: %-router:
 	$(MAKE) -C ./images/router $* ROOT=../.. ADDRESS=$(ROUTER_ADDRESS) \
 	$(if $(findstring debug,$*),PORT=2251)
 	$(if $(findstring debug,$*),$(call bridge_connection,2231,2251))
