@@ -36,7 +36,7 @@ VM_FLAGS =	-enable-kvm \
 export MASK UTILS_DIR
 
 build: build-pc build-router
-build-debug: debug-pc debug-router
+debug: debug-pc debug-router
 
 # Four options for this targets: build-pc build-router debug-pc debug-router
 build-pc debug-pc: %-pc: setup-host
@@ -50,6 +50,7 @@ build-router debug-router: %-router: setup-host
 	$(if $(findstring debug,$*),$(call bridge_connection,2231,2251))
 
 setup-host:
+	chmod +x $(ROOT)/$(UTILS_DIR)/setup-host.sh
 	$(ROOT)/$(UTILS_DIR)/setup-host.sh $(BASE_ADDRESS).1 $(MASK)
 
 # Two options for this target: vm-start vm-create
@@ -62,4 +63,4 @@ $(VM_DRIVE):
 $(VM_IMAGE):
 	wget $(VM_IMAGE_LINK)
 
-.PHONY: build build-debug setup-host
+.PHONY: build debug setup-host
