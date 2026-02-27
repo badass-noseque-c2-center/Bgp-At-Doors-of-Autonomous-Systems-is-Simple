@@ -13,8 +13,16 @@ setup_host_network() {
     ifconfig tap0 $ADDRESS netmask $MASK up;
 }
 
-export -f setup_host_network
+install_dependencies() {
+    if ! { dpkg -l | grep -q uml-utilities && dpkg -l | grep -q net-tools && dpkg -l | grep -q socat; }; then
+	apt install -y uml-utilities net-tools socat
+    fi
+}
+
+export -f setup_host_network install_dependencies
 
 if ! ip addr | grep -qw tap0; then
     su -c setup_host_network
 fi
+
+su -c install_dependencies

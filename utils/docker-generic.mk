@@ -6,6 +6,7 @@ build:
 debug: build clean
 	docker run --rm -d \
 	--privileged \
+	--sysctl net.ipv4.ip_forward=1 \
 	--name $(NAME)  \
 	--hostname $(NAME)  \
 	-p $(PORT):22 \
