@@ -9,6 +9,7 @@ include $(ROOT)/$(UTILS_DIR)/utils.mk
 
 # Real addresses MUST be defined only in this file
 BASE_ADDRESS ?= 10.0.10
+GATEWAY = $(BASE_ADDRESS).1
 PC_ADDRESS = $(BASE_ADDRESS).2
 ROUTER_ADDRESS = $(BASE_ADDRESS).3
 MASK ?= 255.255.255.0
@@ -42,16 +43,16 @@ debug: debug-pc debug-router
 build-pc debug-pc: %-pc:
 	$(MAKE) -C ./images/pc $* ROOT=../.. ADDRESS=$(PC_ADDRESS) \
 	$(if $(findstring debug,$*),PORT=2250)
-	$(if $(findstring debug,$*),$(call bridge_connection,2230,2250))
+	$(if $(findstring debug,$*),$(call bridge_connection,localhost,2230,2250))
 
 build-router debug-router: %-router:
 	$(MAKE) -C ./images/router $* ROOT=../.. ADDRESS=$(ROUTER_ADDRESS) \
 	$(if $(findstring debug,$*),PORT=2251)
-	$(if $(findstring debug,$*),$(call bridge_connection,2231,2251))
+	$(if $(findstring debug,$*),$(call bridge_connection,localhost,2231,2251))
 
 setup-host:
 	chmod +x $(ROOT)/$(UTILS_DIR)/setup-host.sh
-	$(ROOT)/$(UTILS_DIR)/setup-host.sh $(BASE_ADDRESS).1 $(MASK)
+	$(ROOT)/$(UTILS_DIR)/setup-host.sh $(GATEWAY) $(MASK)
 
 # Two options for this target: vm-start vm-create
 vm-start vm-create: vm-%: | $(VM_DRIVE) $(VM_IMAGE)

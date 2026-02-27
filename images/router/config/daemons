@@ -1,6 +1,7 @@
 bgpd=yes
 ospfd=yes
 isisd=yes
+zebra=yes
 
 vtysh_enable=yes
 zebra_options="  -A 127.0.0.1 -s 90000000 --config_file /etc/frr/zebra.conf"
