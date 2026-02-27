@@ -21,4 +21,4 @@ COPY debug.sh /
 RUN chmod +x /debug.sh
 RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/debug.sh"]
