@@ -9,6 +9,4 @@ iface eth0 inet static
 	netmask <MASK>
 EOF
 
-/usr/sbin/sshd -D &
-
-exec /bin/bash
+exec /usr/sbin/sshd -p <SSH_PORT> -D

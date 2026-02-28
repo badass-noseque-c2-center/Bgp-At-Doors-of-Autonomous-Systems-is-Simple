@@ -7,12 +7,14 @@ include $(ROOT)/$(UTILS_DIR)/utils.mk
 ## DOCKER VARS
 ## ###################################################################
 
-# Real addresses MUST be defined only in this file
 BASE_ADDRESS ?= 10.0.10
-GATEWAY = $(BASE_ADDRESS).1
-PC_ADDRESS = $(BASE_ADDRESS).2
-ROUTER_ADDRESS = $(BASE_ADDRESS).3
+GATEWAY ?= $(BASE_ADDRESS).1
 MASK ?= 255.255.255.0
+
+# This variables are defined in the module-specific makefile:
+# ADDRESS ?= 
+# SSH_PORT ?= 
+# BRIDGE_PORT ?= 
 
 ## ###################################################################
 ## VM VARS
@@ -34,21 +36,20 @@ VM_FLAGS =	-enable-kvm \
 		-nic user,hostfwd=tcp::2250-:2250,hostfwd=tcp::2251-:2251 \
 	        -display gtk
 
-export MASK UTILS_DIR
+export MASK UTILS_DIR GATEWAY BASE_ADDRESS
 
 build: build-pc build-router
 debug: debug-pc debug-router
 
 # Four options for this targets: build-pc build-router debug-pc debug-router
-build-pc debug-pc: %-pc:
-	$(MAKE) -C ./images/pc $* ROOT=../.. ADDRESS=$(PC_ADDRESS) \
-	$(if $(findstring debug,$*),PORT=2250)
-	$(if $(findstring debug,$*),$(call bridge_connection,localhost,2230,2250))
+build-pc build-router: build-%:
+	$(MAKE) -C ./images/$* build ROOT=../..
 
-build-router debug-router: %-router:
-	$(MAKE) -C ./images/router $* ROOT=../.. ADDRESS=$(ROUTER_ADDRESS) \
-	$(if $(findstring debug,$*),PORT=2251)
-	$(if $(findstring debug,$*),$(call bridge_connection,localhost,2231,2251))
+debug-pc debug-router: debug-%:
+	$(MAKE) -C ./images/$* debug ROOT=../.. ADDRESS=localhost
+
+clean-pc clean-router: clean-%:
+	$(MAKE) -C ./images/$* clean ROOT=../..
 
 setup-host:
 	chmod +x $(ROOT)/$(UTILS_DIR)/setup-host.sh

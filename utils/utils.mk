@@ -6,6 +6,8 @@ check_defined = $(foreach var,$(sort $(strip $(1))),$(if $(value $(var)),,$(erro
 render_machine_template = sed \
 	$(if $(value ADDRESS),-e "s/<ADDRESS>/$(ADDRESS)/g") \
 	$(if $(value MASK),-e "s/<MASK>/$(MASK)/g") \
+	$(if $(value GATEWAY),-e "s/<GATEWAY>/$(GATEWAY)/g") \
+	$(if $(value SSH_PORT),-e "s/<SSH_PORT>/$(SSH_PORT)/g") \
 	$(1) > $(basename $(1))
 
 
