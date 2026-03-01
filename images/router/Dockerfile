@@ -12,8 +12,7 @@ RUN useradd -rm -d /home/gns3 -s /bin/bash -g root -G sudo -u 1000 gns3
 
 RUN echo 'gns3:gns3' | chpasswd
 
-COPY config/daemons  /etc/frr/daemons
-COPY config/frr.conf /etc/frr/frr.conf
+COPY config/  /etc/frr/
 
 COPY entrypoint.sh /
 COPY debug.sh /

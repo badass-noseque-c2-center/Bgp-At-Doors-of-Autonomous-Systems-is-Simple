@@ -11,10 +11,11 @@ render_machine_template = sed \
 
 # Bridge the docker container connections for debug
 # Args:
-# $(1) => Listen port
-# $(2) => Read port
+# $(1) => Address
+# $(2) => Listen port
+# $(3) => Read port
 define bridge_connection
-	MATCHED_PID=$$(ss -lptn | awk -F',pid=|,' '/:$(1)/{print $$2}') \
+	MATCHED_PID=$$(ss -lptn | awk -F',pid=|,' '/:$(2)/{print $$2}') \
 	&& if [ -n "$$MATCHED_PID" ]; then kill -9 $$MATCHED_PID; fi
-	socat TCP-LISTEN:$(1),fork TCP:localhost:$(2) &
+	socat TCP-LISTEN:$(2),fork TCP:$(1):$(3) &
  endef
