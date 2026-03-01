@@ -5,14 +5,10 @@ build:
 # for simplicity --privileged is used.
 debug: build clean
 	docker run --rm -d \
-<<<<<<< HEAD
 	--cap-add=NET_ADMIN \
 	--cap-add=NET_RAW \
 	--cap-add=SYS_ADMIN \
 	--cap-add=NET_BIND_SERVICE \
-=======
-	--privileged \
->>>>>>> main
 	--sysctl net.ipv4.ip_forward=1 \
 	--name $(NAME)  \
 	--hostname $(NAME)  \
