@@ -10,6 +10,7 @@ include $(ROOT)/$(UTILS_DIR)/utils.mk
 BASE_ADDRESS ?= 10.0.10
 GATEWAY ?= $(BASE_ADDRESS).1
 MASK ?= 255.255.255.0
+TAP_INTERFACE ?= tap0
 
 # This variables are defined in the module-specific makefile:
 # ADDRESS ?= 
@@ -42,7 +43,7 @@ build: build-pc build-router
 debug: debug-pc debug-router
 
 # Four options for this targets: build-pc build-router debug-pc debug-router
-build-pc build-router: build-%:
+build-pc build-router: build-%: check-host
 	$(MAKE) -C ./images/$* build ROOT=../..
 
 debug-pc debug-router: debug-%:
@@ -51,9 +52,15 @@ debug-pc debug-router: debug-%:
 clean-pc clean-router: clean-%:
 	$(MAKE) -C ./images/$* clean ROOT=../..
 
+check-host:
+	@if ! ip addr show tap0 | grep -q $(GATEWAY); then \
+		echo "Host is not configured! Run 'make setup-host'."; \
+		exit 1; \
+	fi
+
 setup-host:
 	chmod +x $(ROOT)/$(UTILS_DIR)/setup-host.sh
-	$(ROOT)/$(UTILS_DIR)/setup-host.sh $(GATEWAY) $(MASK)
+	$(ROOT)/$(UTILS_DIR)/setup-host.sh $(GATEWAY) $(MASK) $(TAP_INTERFACE)
 
 # Two options for this target: vm-start vm-create
 vm-start vm-create: vm-%: | $(VM_DRIVE) $(VM_IMAGE)
