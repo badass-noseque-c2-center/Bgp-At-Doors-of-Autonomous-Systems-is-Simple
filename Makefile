@@ -25,13 +25,13 @@ VM_MOUNT ?= $(ROOT)
 VM_CREATE_FLAGS =  -cdrom  $(VM_IMAGE)
 VM_FLAGS =	-enable-kvm \
 	        -m 4096 \
-		-smp 4 \
+			-smp 4 \
 	        -drive file=$(VM_DRIVE),if=virtio,format=qcow2 \
-		-virtfs local,path=$(VM_MOUNT),mount_tag=p1,security_model=mapped-xattr \
+			-virtfs local,path=$(VM_MOUNT),mount_tag=p1,security_model=mapped-xattr \
 	        -cpu host \
 	        -machine q35 \
 	        -device virtio-vga \
-		-nic user,hostfwd=tcp::2250-:2250,hostfwd=tcp::2251-:2251 \
+			-nic user,hostfwd=tcp::2250-:2250,hostfwd=tcp::2251-:2251 \
 	        -display gtk
 
 export MASK UTILS_DIR

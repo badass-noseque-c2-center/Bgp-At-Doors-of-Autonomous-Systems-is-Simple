@@ -19,7 +19,7 @@ x-host-dockerfile: &host-dockerfile
     ARG NETMASK="24"
     ARG DEFAULT_GATEWAY="10.0.0.1"
 
-    RUN apt update && apt install -y iproute2 && rm -rf /var/lib/apt/lists/*
+    RUN apt update && apt install -y iproute2 ifupdown && rm -rf /var/lib/apt/lists/*
     RUN mkdir -p /etc/network/ && touch /etc/network/interfaces
     COPY <<EOF /etc/network/interfaces
     auto eth0
