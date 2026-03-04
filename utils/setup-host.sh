@@ -4,13 +4,14 @@ set -exa
 
 ADDRESS=$1
 MASK=$2
+TAP_INTERFACE=$3
 
 setup_host_network() {
     set -ex
     chown root:netdev /dev/net/tun
     { id -nG $USER | grep -qw netdev; } || usermod -aG netdev $USER
-    tunctl -u $USER -g netdev -t tap0;
-    ifconfig tap0 $ADDRESS netmask $MASK up;
+    tunctl -u $USER -g netdev -t $TAP_INTERFACE;
+    ifconfig $TAP_INTERFACE $ADDRESS netmask $MASK up;
 }
 
 install_dependencies() {
