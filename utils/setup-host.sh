@@ -21,8 +21,8 @@ install_dependencies() {
 
 export -f setup_host_network install_dependencies
 
+su -c install_dependencies
+
 if ! ip addr | grep -qw tap0; then
     su -c setup_host_network
 fi
-
-su -c install_dependencies

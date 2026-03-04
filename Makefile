@@ -25,6 +25,12 @@ VM_IMAGE ?= $(ROOT)/$(notdir $(VM_IMAGE_LINK))
 VM_DRIVE ?= $(ROOT)/ubuntu.qcow2
 VM_MOUNT ?= $(ROOT)
 VM_CREATE_FLAGS =  -cdrom  $(VM_IMAGE)
+VM_FWD_PORTS = 	-nic user,hostfwd=tcp::2230-:2230 \
+				-nic user,hostfwd=tcp::2231-:2231 \
+				-nic user,hostfwd=tcp::2232-:2232 \
+				-nic user,hostfwd=tcp::2233-:2233 \
+				-nic user,hostfwd=tcp::2234-:2234 \
+				-nic user,hostfwd=tcp::2235-:2235
 VM_FLAGS =	-enable-kvm \
 	        -m 4096 \
 			-smp 4 \
@@ -33,8 +39,9 @@ VM_FLAGS =	-enable-kvm \
 	        -cpu host \
 	        -machine q35 \
 	        -device virtio-vga \
-			-nic user,hostfwd=tcp::2250-:2250,hostfwd=tcp::2251-:2251 \
-	        -display gtk
+			-nic user,hostfwd=tcp::2230 \
+	        -display gtk \
+			$(VM_FWD_PORTS)
 
 export MASK UTILS_DIR GATEWAY BASE_ADDRESS
 
