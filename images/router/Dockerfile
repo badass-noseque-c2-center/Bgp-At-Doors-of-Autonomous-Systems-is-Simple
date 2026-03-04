@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
     iproute2 \
     iputils-ping \
+    net-tools \
     frr \
     && rm -rf /var/lib/apt/lists/*
 
@@ -15,9 +16,7 @@ RUN echo 'gns3:gns3' | chpasswd
 COPY config/  /etc/frr/
 
 COPY entrypoint.sh /
-COPY debug.sh /
 
-RUN chmod +x /debug.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
