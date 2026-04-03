@@ -45,6 +45,12 @@ install_dependencies() {
 	apt install -y uml-utilities net-tools socat
     fi
 
+    if ! { dpkg -l | grep -q gns3-gui && dpkg -l | grep -q gns3-server; }; then
+	add-apt-repository ppa:gns3/ppa \
+	    && apt update \
+	    && apt install gns3-gui gns3-server
+    fi
+
     if ! { dpkg -l | grep -q openssh-server; }; then
 	apt update
 	apt install -y openssh-server \
@@ -60,6 +66,6 @@ export -f setup_host_network install_dependencies install_docker
 
 su -c install_dependencies
 
-if ! ip addr | grep -qw $TAP_INTERFACE; then
+if ! ip addr show $TAP_INTERFACE | grep -q $ADDRESS; then
     su -c setup_host_network
 fi

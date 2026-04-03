@@ -6,16 +6,12 @@ include $(ROOT)/$(UTILS_DIR)/utils.mk
 ## ###################################################################
 ## DOCKER VARS
 ## ###################################################################
-
+IMAGES := $(notdir $(wildcard $(ROOT)/images/*))
 BASE_ADDRESS ?= 10.0.10
+BRIDGED_PORTS := $(call sum_ports,$(IMAGES),2230)
 GATEWAY ?= $(BASE_ADDRESS).1
 MASK ?= 255.255.255.0
 TAP_INTERFACE ?= tap0
-
-# This variables are defined in the module-specific makefile:
-# ADDRESS ?= 
-# SSH_PORT ?= 
-# BRIDGE_PORT ?= 
 
 ## ###################################################################
 ## VM VARS
@@ -34,23 +30,12 @@ VM_FLAGS =	-enable-kvm \
 	        -cpu host \
 	        -machine q35 \
 	        -device virtio-vga \
-		-nic user,hostfwd=tcp::2250-:2250,hostfwd=tcp::2251-:2251,hostfwd=tcp::2222-:22 \
-	        -display gtk
+	        -display gtk \
+		-nic user,hostfwd=tcp::2222-:22$(subst $(space),,$(foreach port,$(BRIDGED_PORTS),,hostfwd=tcp::$(port)-:$(port)))
 
 export MASK UTILS_DIR GATEWAY BASE_ADDRESS
 
-build: build-pc build-router
-debug: debug-pc debug-router
-
-# Four options for this targets: build-pc build-router debug-pc debug-router
-build-pc build-router: build-%: check-host
-	$(MAKE) -C ./images/$* build ROOT=../..
-
-debug-pc debug-router: debug-%:
-	$(MAKE) -C ./images/$* debug ROOT=../.. ADDRESS=localhost
-
-clean-pc clean-router: clean-%:
-	$(MAKE) -C ./images/$* clean ROOT=../..
+$(foreach image-port,$(join $(IMAGES),$(addprefix /,$(BRIDGED_PORTS))),$(eval $(call machine_template,$(subst /$(notdir $(image-port)),,$(image-port)),$(notdir $(image-port)))))
 
 check-host:
 	@if ! ip addr show tap0 | grep -q $(GATEWAY); then \
