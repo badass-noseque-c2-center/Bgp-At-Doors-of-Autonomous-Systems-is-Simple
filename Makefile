@@ -34,7 +34,7 @@ VM_FLAGS =	-enable-kvm \
 	        -cpu host \
 	        -machine q35 \
 	        -device virtio-vga \
-		-nic user,hostfwd=tcp::2250-:2250,hostfwd=tcp::2251-:2251 \
+		-nic user,hostfwd=tcp::2250-:2250,hostfwd=tcp::2251-:2251,hostfwd=tcp::2222-:22 \
 	        -display gtk
 
 export MASK UTILS_DIR GATEWAY BASE_ADDRESS
@@ -60,7 +60,7 @@ check-host:
 
 setup-host:
 	chmod +x $(ROOT)/$(UTILS_DIR)/setup-host.sh
-	$(ROOT)/$(UTILS_DIR)/setup-host.sh $(GATEWAY) $(MASK) $(TAP_INTERFACE)
+	MY_USER=$(USER) $(ROOT)/$(UTILS_DIR)/setup-host.sh $(GATEWAY) $(MASK) $(TAP_INTERFACE)
 
 # Two options for this target: vm-start vm-create
 vm-start vm-create: vm-%: | $(VM_DRIVE) $(VM_IMAGE)
