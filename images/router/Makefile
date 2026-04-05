@@ -2,7 +2,7 @@ $(call check_defined,ADDRESS MASK UTILS_DIR ROOT)
 
 include $(ROOT)/$(UTILS_DIR)/utils.mk
 
-TEMPLATE = ./entrypoint.sh.template
+TEMPLATE = .env.template
 NAME ?= gns3_router
 ADDRESS ?= $(BASE_ADDRESS).3
 SSH_PORT ?= 2251
