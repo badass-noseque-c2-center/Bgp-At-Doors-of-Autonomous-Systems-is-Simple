@@ -5,6 +5,7 @@ build: bridge
 # for simplicity --privileged is used.
 debug: build clean bridge
 	docker run --rm -d \
+	--env-file ./$(subst $(suffix $(TEMPLATE)),,$(TEMPLATE)) \
 	--privileged \
 	--sysctl net.ipv4.ip_forward=1 \
 	--name $(NAME)  \
