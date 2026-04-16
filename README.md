@@ -4,7 +4,9 @@
 1.  [FRR](#org0d5ea1c)
     1.  [Configuration](#orga2ce7d3)
 2.  [Setup](#orgeec0c17)
-    1.  [Auto Setup](#org3e5ab26)
+    1.  [Virtual Machine](#org879fc28)
+        1.  [VM first steps](#org7b620de)
+        2.  [Building images for GNS3](#org809073a)
     2.  [Manual setup ssh connection between GNS3 nodes and Host machine](#org8a07614)
         1.  [Create a TAP interface](#orgc97c830)
         2.  [Connect to tap interface](#org2b4e8fd)
@@ -32,21 +34,43 @@ In the new version of frr there is no multiple configuration files. All the conf
 # Setup
 
 
-<a id="org3e5ab26"></a>
+<a id="org879fc28"></a>
 
-## Auto Setup
+## Virtual Machine
 
-To automatically setup your virtual machine for working with gns3 run use the Makefile:
+First and foremost we'll need our VM to run GNS3. If you don't have the image yet, you have two make options here:
 
-    make setup-host
+-   `make vm-create`: To create the VM by inserting the image in qemu as a CD.
+-   `make vm-start`: To start the VM once created (i.e. image installed in the drive).
 
-Default address and mask is: `10.0.10.` and `255.255.255.0`.
+Both options will download the image if not present and start the VM, for this you'll need to have installed in your system `qemu-system-x86_64`. All this steps will be, of course, run from your **host** machine.
 
-You can then use one of the multiple options to run/debug your containers, for example:
 
-    make debug-router
+<a id="org7b620de"></a>
 
-Check the Makefile for more
+### VM first steps
+
+Once the VM is installed and running, you'll need to perform this steps **each** time the VM starts:
+
+-   **mount** this project folder in the VM. You can of course automatically do that with fstab. One example of manually mounting would be:
+    
+        sudo mount -t 9p -o trans=virtio,version9p2000.L p1 /mnt/shared
+
+-   Run `make setup-host`. This will set up your VM installing needed packages, including GNS3, and setting up the network interfaces in order to debug from your host.
+
+
+<a id="org809073a"></a>
+
+### Building images for GNS3
+
+The makefile will automatically build the images needed for GNS3, at this point two templates are present: `pc` just a minimal template acting as a user in the network; and `router` just like `pc` but with `frr` service activated at entrypoint. In order to build and run/test you have two options:
+
+-   `make debug`: Will build the images and run them locally in your guest (localhost address), so they are accessible in you host machine by ssh starting at port **2230** (`ssg gns3@localhost -p 2230`).
+-   `make build`: Will build the images prepared to be used by GNS3. You need to add them as a template in GNS3 in order to be run. Once running they can also be accessible from your host at the same port as before.
+
+Images are in `images/`. The address, mask, port, and gateway can be set in the `.env` file if desired, but in GNS3 the same parameters found in `.env` must be copied in the environment variables from the template configuration wizard. This way addresses and others can be dynamically changed from GNS3.
+
+In order to access the GNS3 machines from your host they must have an address in the TAP interface created in `make setup-host` (`10.0.10.*`). To do that, connect the to a GNS3-cloud node and select the tap interface from this node.
 
 
 <a id="org8a07614"></a>
