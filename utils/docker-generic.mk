@@ -9,6 +9,7 @@ debug: build clean bridge
 	--cap-add=NET_RAW \
 	--cap-add=SYS_ADMIN \
 	--cap-add=NET_BIND_SERVICE \
+	--env-file ./$(subst $(suffix $(TEMPLATE)),,$(TEMPLATE)) \
 	--sysctl net.ipv4.ip_forward=1 \
 	--name $(NAME)  \
 	--hostname $(NAME)  \
