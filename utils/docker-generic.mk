@@ -5,8 +5,11 @@ build: bridge
 # for simplicity --privileged is used.
 debug: build clean bridge
 	docker run --rm -d \
+	--cap-add=NET_ADMIN \
+	--cap-add=NET_RAW \
+	--cap-add=SYS_ADMIN \
+	--cap-add=NET_BIND_SERVICE \
 	--env-file ./$(subst $(suffix $(TEMPLATE)),,$(TEMPLATE)) \
-	--privileged \
 	--sysctl net.ipv4.ip_forward=1 \
 	--name $(NAME)  \
 	--hostname $(NAME)  \
